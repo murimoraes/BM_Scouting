@@ -1,0 +1,26 @@
+{
+  "header": {
+    "schema_name": "field_positions",
+    "schema_version": "1.0.0",
+    "match_id": "exemplo-0001",
+    "video": {"video_id": "exemplo-0001-cam1", "sha256": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef", "fps": 25.0, "width": 1920, "height": 1080, "frame_count": 142500, "duration_s": 5700.0},
+    "producer": {"module": "field", "module_version": "0.0.0", "config_sha256": "fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210", "created_at": "2026-10-05T00:00:00Z"},
+    "inputs": [{"schema_name": "tracks", "sha256": "ffeeddccbbaa99887766554433221100ffeeddccbbaa99887766554433221100"}, {"schema_name": "player_identity", "sha256": "00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff"}]
+  },
+  "field": {"length_m": 105, "width_m": 68, "dimensions_source": "default_assumed"},
+  "periods": [
+    {"period": 1, "frame_start": 0, "frame_end": 71250, "team_a_attacks_towards": "+x"}
+  ],
+  "homography": {
+    "mode": "keyframes",
+    "estimates": [
+      {"frame_index": 1200, "H": [[0.05, 0.0, 4.3], [0.0, 0.06, -1.2], [0.0, 0.0001, 1.0]], "reprojection_error_m": 0.6, "keypoints_used": 8, "status": "ok"}
+    ]
+  },
+  "entities": [
+    {"entity_id": "g7", "kind": "player", "global_id": 7, "is_target": true, "team_label": "team_a", "samples": [
+      {"frame_index": 1200, "timestamp_s": 48.0, "position_m": {"x_m": 52.3, "y_m": 30.1}, "image_point_px": [960.0, 610.0], "source": "projected", "on_ground_assumed": true},
+      {"frame_index": 1201, "timestamp_s": 48.04, "position_m": {"x_m": 52.4, "y_m": 30.1}, "image_point_px": null, "source": "interpolated", "on_ground_assumed": true}
+    ]}
+  ]
+}

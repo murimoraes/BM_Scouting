@@ -1,0 +1,23 @@
+{
+  "header": {
+    "schema_name": "report_input",
+    "schema_version": "1.0.0",
+    "match_id": "exemplo-0001",
+    "video": {"video_id": "exemplo-0001-cam1", "sha256": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef", "fps": 25.0, "width": 1920, "height": 1080, "frame_count": 142500, "duration_s": 5700.0},
+    "producer": {"module": "report", "module_version": "0.0.0", "config_sha256": "fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210", "created_at": "2026-10-05T00:00:00Z"},
+    "inputs": [{"schema_name": "stats", "sha256": "00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff"}, {"schema_name": "events", "sha256": "ffeeddccbbaa99887766554433221100ffeeddccbbaa99887766554433221100"}, {"schema_name": "player_identity", "sha256": "fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210"}]
+  },
+  "language": "pt-BR",
+  "audience": "scout",
+  "player": {"jersey_number": 10, "team_name": "Exemplo FC", "display_name": null},
+  "match": {"competition": null, "date": null, "opponent": null},
+  "facts": [
+    {"fact_id": "F001", "metric": "distance_m", "value": 9800.0, "unit": "m", "reliability": "medium", "statement_hint": "distancia percorrida estimada"},
+    {"fact_id": "F002", "metric": "passes_completed", "value": 31, "unit": "count", "reliability": "low", "statement_hint": "passes certos detectados por regra"}
+  ],
+  "highlights": [
+    {"event_id": "E0001", "type": "pass", "t_start_s": 47.4, "t_end_s": 51.6, "fact_ids": ["F002"]}
+  ],
+  "limitations": ["Jogador rastreado em 75% do tempo de partida; metricas se referem a esse periodo."],
+  "generation_constraints": {"only_listed_facts": true, "cite_fact_ids": true, "max_words": 600}
+}

@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bmscouting.invalid/contracts/v1/detections.schema.json",
+  "title": "detections v1",
+  "description": "Saída do módulo detection (Vision): caixas por frame processado, em pixels da resolução original. Consumido por tracking.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["header", "detector", "sampling", "frames"],
+  "properties": {
+    "header": {
+      "allOf": [
+        {"$ref": "common.schema.json#/$defs/header"},
+        {"properties": {"schema_name": {"const": "detections"}}}
+      ]
+    },
+    "detector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["model_name", "weights_sha256", "confidence_threshold", "classes"],
+      "properties": {
+        "model_name": {"type": "string", "minLength": 1},
+        "weights_sha256": {"$ref": "common.schema.json#/$defs/sha256"},
+        "confidence_threshold": {"$ref": "common.schema.json#/$defs/confidence"},
+        "classes": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "common.schema.json#/$defs/object_class"}
+        }
+      }
+    },
+    "sampling": {
+      "description": "Quais frames foram processados: frame_start, frame_start+stride, ..., <= frame_end.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["frame_stride", "frame_start", "frame_end"],
+      "properties": {
+        "frame_stride": {"type": "integer", "minimum": 1},
+        "frame_start": {"$ref": "common.schema.json#/$defs/frame_index"},
+        "frame_end": {"$ref": "common.schema.json#/$defs/frame_index"}
+      }
+    },
+    "frames": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["frame_index", "timestamp_s", "detections"],
+        "properties": {
+          "frame_index": {"$ref": "common.schema.json#/$defs/frame_index"},
+          "timestamp_s": {"$ref": "common.schema.json#/$defs/timestamp_s"},
+          "detections": {
+            "type": "array",
+            "items": {"$ref": "#/$defs/detection"}
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "detection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["class", "bbox_xyxy", "confidence"],
+      "properties": {
+        "class": {"$ref": "common.schema.json#/$defs/object_class"},
+        "bbox_xyxy": {"$ref": "common.schema.json#/$defs/bbox_xyxy"},
+        "confidence": {"$ref": "common.schema.json#/$defs/confidence"}
+      }
+    }
+  }
+}

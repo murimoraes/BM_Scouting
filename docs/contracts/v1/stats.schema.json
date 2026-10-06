@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bmscouting.invalid/contracts/v1/stats.schema.json",
+  "title": "stats v1",
+  "description": "Saída do módulo stats: métricas consolidadas do jogador-alvo, cada uma com unidade, confiabilidade e base de cálculo. Consumido por report.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["header", "target", "coverage", "metrics", "heatmap"],
+  "properties": {
+    "header": {
+      "allOf": [
+        {"$ref": "common.schema.json#/$defs/header"},
+        {"properties": {"schema_name": {"const": "stats"}}}
+      ]
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["entity_id", "jersey_number", "team_label"],
+      "properties": {
+        "entity_id": {"type": "string", "minLength": 1},
+        "jersey_number": {"type": "integer", "minimum": 0, "maximum": 99},
+        "team_label": {"$ref": "common.schema.json#/$defs/team_label"}
+      }
+    },
+    "coverage": {
+      "description": "Quanto da partida sustenta as métricas. Obrigatório para o relatório declarar limitações.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["match_duration_s", "observed_s", "tracked_fraction", "valid_homography_fraction"],
+      "properties": {
+        "match_duration_s": {"type": "number", "minimum": 0},
+        "observed_s": {"type": "number", "minimum": 0},
+        "tracked_fraction": {"$ref": "common.schema.json#/$defs/fraction"},
+        "valid_homography_fraction": {"$ref": "common.schema.json#/$defs/fraction"}
+      }
+    },
+    "metrics": {
+      "description": "Mapa nome_da_métrica -> valor. Nomes em snake_case.",
+      "type": "object",
+      "propertyNames": {"pattern": "^[a-z][a-z0-9_]*$"},
+      "additionalProperties": {"$ref": "#/$defs/metric"}
+    },
+    "heatmap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["grid_nx", "grid_ny", "normalization", "values"],
+      "properties": {
+        "grid_nx": {"type": "integer", "minimum": 1},
+        "grid_ny": {"type": "integer", "minimum": 1},
+        "normalization": {"enum": ["time_fraction", "count"]},
+        "values": {
+          "description": "grid_ny linhas x grid_nx colunas, no sistema de coordenadas de field_positions.",
+          "type": "array",
+          "items": {"type": "array", "items": {"type": "number", "minimum": 0}}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "metric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "unit", "reliability", "n_samples", "basis"],
+      "properties": {
+        "value": {"type": ["number", "null"]},
+        "unit": {"type": "string", "minLength": 1},
+        "reliability": {"$ref": "common.schema.json#/$defs/reliability"},
+        "n_samples": {"type": "integer", "minimum": 0},
+        "basis": {"type": "string", "minLength": 1}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"value": {"type": "null"}}},
+          "then": {"properties": {"reliability": {"const": "unavailable"}}}
+        }
+      ]
+    }
+  }
+}

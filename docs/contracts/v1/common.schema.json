@@ -1,0 +1,142 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bmscouting.invalid/contracts/v1/common.schema.json",
+  "title": "common v1",
+  "description": "Definições compartilhadas por todos os contratos v1. Não é um artefato: só é referenciado via $ref. O domínio .invalid é reservado (RFC 2606) e nunca é resolvido pela rede; o teste usa um Registry local.",
+  "$defs": {
+    "artifact_name": {
+      "enum": ["detections", "tracks", "player_identity", "field_positions", "events", "stats", "report_input"]
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "semver": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "match_id": {
+      "description": "Identificador opaco da partida. Não deve conter nome de pessoa (LGPD).",
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{2,63}$"
+    },
+    "frame_index": {
+      "description": "Índice do frame no vídeo original, base 0.",
+      "type": "integer",
+      "minimum": 0
+    },
+    "timestamp_s": {
+      "description": "Segundos desde o início do vídeo.",
+      "type": "number",
+      "minimum": 0
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "fraction": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "bbox_xyxy": {
+      "description": "[x1, y1, x2, y2] em pixels da resolução original; origem no canto superior esquerdo da imagem.",
+      "type": "array",
+      "items": {"type": "number", "minimum": 0},
+      "minItems": 4,
+      "maxItems": 4
+    },
+    "point_px": {
+      "description": "[u, v] em pixels da resolução original.",
+      "type": "array",
+      "items": {"type": "number"},
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "point_m": {
+      "description": "Ponto no sistema de coordenadas do campo (ver field_positions.field). Pode ficar levemente fora de [0, comprimento] x [0, largura].",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x_m", "y_m"],
+      "properties": {
+        "x_m": {"type": "number"},
+        "y_m": {"type": "number"}
+      }
+    },
+    "object_class": {
+      "enum": ["player", "goalkeeper", "referee", "ball", "other"]
+    },
+    "team_label": {
+      "description": "Rótulo de time relativo à partida (clusters), não o nome do clube.",
+      "enum": ["team_a", "team_b", "referee", "unknown"]
+    },
+    "reliability": {
+      "description": "Confiabilidade declarada de um valor. 'unavailable' quando o valor não pôde ser calculado.",
+      "enum": ["high", "medium", "low", "unavailable"]
+    },
+    "video": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["video_id", "sha256", "fps", "width", "height", "frame_count", "duration_s"],
+      "properties": {
+        "video_id": {"type": "string", "minLength": 1},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "fps": {"type": "number", "exclusiveMinimum": 0},
+        "width": {"type": "integer", "minimum": 1},
+        "height": {"type": "integer", "minimum": 1},
+        "frame_count": {"type": "integer", "minimum": 0},
+        "duration_s": {"type": "number", "minimum": 0}
+      }
+    },
+    "producer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["module", "module_version", "config_sha256", "created_at"],
+      "properties": {
+        "module": {
+          "description": "'human_annotation' quando o artefato é ground truth anotado manualmente (ver docs/EVALUATION.md).",
+          "enum": ["detection", "tracking", "identity", "field", "events", "stats", "report", "human_annotation"]
+        },
+        "module_version": {"$ref": "#/$defs/semver"},
+        "config_sha256": {"$ref": "#/$defs/sha256"},
+        "created_at": {
+          "description": "ISO 8601 em UTC, ex.: 2026-10-05T00:00:00Z.",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "input_ref": {
+      "description": "Referência a um artefato de entrada (linhagem e chave de cache).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_name", "sha256"],
+      "properties": {
+        "schema_name": {"$ref": "#/$defs/artifact_name"},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "header": {
+      "description": "Cabeçalho obrigatório de todo artefato.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_name", "schema_version", "match_id", "video", "producer", "inputs"],
+      "properties": {
+        "schema_name": {"$ref": "#/$defs/artifact_name"},
+        "schema_version": {
+          "description": "MAJOR fixo em 1 neste diretório (v1).",
+          "type": "string",
+          "pattern": "^1\\.[0-9]+\\.[0-9]+$"
+        },
+        "match_id": {"$ref": "#/$defs/match_id"},
+        "video": {"$ref": "#/$defs/video"},
+        "producer": {"$ref": "#/$defs/producer"},
+        "inputs": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/input_ref"}
+        }
+      }
+    }
+  }
+}

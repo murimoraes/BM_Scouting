@@ -1,0 +1,151 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bmscouting.invalid/contracts/v1/player_identity.schema.json",
+  "title": "player_identity v1",
+  "description": "Saída do módulo identity: atribuição de time por tracklet, votos de número de camisa por tracklet, candidatos ranqueados ao jogador-alvo e o estado da confirmação humana (ADR-0002). Consumido por field, stats e report.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["header", "query", "team_assignment", "jersey_observations", "candidates", "selection"],
+  "properties": {
+    "header": {
+      "allOf": [
+        {"$ref": "common.schema.json#/$defs/header"},
+        {"properties": {"schema_name": {"const": "player_identity"}}}
+      ]
+    },
+    "query": {
+      "description": "O que o usuário informou ao enviar o vídeo.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["jersey_number", "team_name", "team_side"],
+      "properties": {
+        "jersey_number": {"$ref": "#/$defs/jersey_number"},
+        "team_name": {"type": "string", "minLength": 1},
+        "team_side": {"enum": ["home", "away", "unknown"]}
+      }
+    },
+    "team_assignment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["method", "clusters", "assignments"],
+      "properties": {
+        "method": {"type": "string", "minLength": 1},
+        "clusters": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["team_label", "color_rgb"],
+            "properties": {
+              "team_label": {"$ref": "common.schema.json#/$defs/team_label"},
+              "color_rgb": {
+                "type": "array",
+                "items": {"type": "integer", "minimum": 0, "maximum": 255},
+                "minItems": 3,
+                "maxItems": 3
+              }
+            }
+          }
+        },
+        "assignments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["tracklet_id", "team_label", "confidence"],
+            "properties": {
+              "tracklet_id": {"type": "integer", "minimum": 0},
+              "team_label": {"$ref": "common.schema.json#/$defs/team_label"},
+              "confidence": {"$ref": "common.schema.json#/$defs/confidence"}
+            }
+          }
+        }
+      }
+    },
+    "jersey_observations": {
+      "description": "Votação por tracklet: leituras de número agregadas.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["tracklet_id", "votes", "frames_read", "frames_attempted"],
+        "properties": {
+          "tracklet_id": {"type": "integer", "minimum": 0},
+          "votes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["number", "count", "mean_confidence"],
+              "properties": {
+                "number": {"$ref": "#/$defs/jersey_number"},
+                "count": {"type": "integer", "minimum": 1},
+                "mean_confidence": {"$ref": "common.schema.json#/$defs/confidence"}
+              }
+            }
+          },
+          "frames_read": {"type": "integer", "minimum": 0},
+          "frames_attempted": {"type": "integer", "minimum": 0}
+        }
+      }
+    },
+    "candidates": {
+      "description": "Candidatos ao jogador-alvo, para a confirmação de 1 clique.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["rank", "tracklet_ids", "score", "evidence_frames", "reason"],
+        "properties": {
+          "rank": {"type": "integer", "minimum": 1},
+          "tracklet_ids": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {"type": "integer", "minimum": 0}
+          },
+          "score": {"$ref": "common.schema.json#/$defs/confidence"},
+          "evidence_frames": {
+            "type": "array",
+            "items": {"$ref": "common.schema.json#/$defs/frame_index"}
+          },
+          "reason": {"type": "string"}
+        }
+      }
+    },
+    "selection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "tracklet_ids", "team_label", "method", "confirmed_by", "confirmed_at"],
+      "properties": {
+        "status": {"enum": ["pending_confirmation", "confirmed", "corrected", "rejected", "auto_accepted"]},
+        "tracklet_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "integer", "minimum": 0}
+        },
+        "team_label": {"$ref": "common.schema.json#/$defs/team_label"},
+        "method": {"enum": ["tracklet_vote", "human_click", "human_correction"]},
+        "confirmed_by": {
+          "description": "ID opaco do usuário que confirmou (nunca nome/e-mail).",
+          "type": ["string", "null"]
+        },
+        "confirmed_at": {"type": ["string", "null"]}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"status": {"enum": ["confirmed", "corrected"]}}},
+          "then": {
+            "properties": {
+              "confirmed_by": {"type": "string", "minLength": 1},
+              "confirmed_at": {"type": "string", "minLength": 1}
+            }
+          }
+        }
+      ]
+    }
+  },
+  "$defs": {
+    "jersey_number": {"type": "integer", "minimum": 0, "maximum": 99}
+  }
+}

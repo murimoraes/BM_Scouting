@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bmscouting.invalid/contracts/v1/field_positions.schema.json",
+  "title": "field_positions v1",
+  "description": "Saída do módulo field: homografias imagem->campo e posições em metros por entidade. Sistema de coordenadas: vista superior canônica; x ao longo do comprimento, de 0 (linha de fundo esquerda) a length_m; y ao longo da largura, de 0 (lateral superior) a width_m. Consumido por events e stats.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["header", "field", "periods", "homography", "entities"],
+  "properties": {
+    "header": {
+      "allOf": [
+        {"$ref": "common.schema.json#/$defs/header"},
+        {"properties": {"schema_name": {"const": "field_positions"}}}
+      ]
+    },
+    "field": {
+      "description": "Limites de dimensão conforme IFAB Laws of the Game, Lei 1 (comprimento 90-120 m, largura 45-90 m).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["length_m", "width_m", "dimensions_source"],
+      "properties": {
+        "length_m": {"type": "number", "minimum": 90, "maximum": 120},
+        "width_m": {"type": "number", "minimum": 45, "maximum": 90},
+        "dimensions_source": {"enum": ["measured", "declared", "default_assumed"]}
+      }
+    },
+    "periods": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["period", "frame_start", "frame_end", "team_a_attacks_towards"],
+        "properties": {
+          "period": {"type": "integer", "minimum": 1, "maximum": 4},
+          "frame_start": {"$ref": "common.schema.json#/$defs/frame_index"},
+          "frame_end": {"$ref": "common.schema.json#/$defs/frame_index"},
+          "team_a_attacks_towards": {"enum": ["+x", "-x", "unknown"]}
+        }
+      }
+    },
+    "homography": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "estimates"],
+      "properties": {
+        "mode": {"enum": ["static", "keyframes", "per_frame"]},
+        "estimates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["frame_index", "H", "reprojection_error_m", "keypoints_used", "status"],
+            "properties": {
+              "frame_index": {"$ref": "common.schema.json#/$defs/frame_index"},
+              "H": {
+                "description": "Matriz 3x3 que leva pixel homogêneo [u, v, 1] a metros no campo.",
+                "type": "array",
+                "minItems": 3,
+                "maxItems": 3,
+                "items": {
+                  "type": "array",
+                  "minItems": 3,
+                  "maxItems": 3,
+                  "items": {"type": "number"}
+                }
+              },
+              "reprojection_error_m": {"type": ["number", "null"], "minimum": 0},
+              "keypoints_used": {"type": "integer", "minimum": 0},
+              "status": {"enum": ["ok", "degraded", "failed"]}
+            }
+          }
+        }
+      }
+    },
+    "entities": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/entity"}
+    }
+  },
+  "$defs": {
+    "entity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["entity_id", "kind", "global_id", "is_target", "team_label", "samples"],
+      "properties": {
+        "entity_id": {"type": "string", "pattern": "^(g[0-9]+|t[0-9]+|ball)$"},
+        "kind": {"enum": ["player", "ball"]},
+        "global_id": {"type": ["integer", "null"], "minimum": 0},
+        "is_target": {"type": "boolean"},
+        "team_label": {"$ref": "common.schema.json#/$defs/team_label"},
+        "samples": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["frame_index", "timestamp_s", "position_m", "image_point_px", "source", "on_ground_assumed"],
+            "properties": {
+              "frame_index": {"$ref": "common.schema.json#/$defs/frame_index"},
+              "timestamp_s": {"$ref": "common.schema.json#/$defs/timestamp_s"},
+              "position_m": {"$ref": "common.schema.json#/$defs/point_m"},
+              "image_point_px": {
+                "description": "Ponto da imagem projetado (pé do jogador / centro da bola). null se a amostra foi interpolada.",
+                "oneOf": [
+                  {"$ref": "common.schema.json#/$defs/point_px"},
+                  {"type": "null"}
+                ]
+              },
+              "source": {"enum": ["projected", "interpolated", "smoothed"]},
+              "on_ground_assumed": {
+                "description": "Homografia só é válida no plano do gramado; false sinaliza bola possivelmente no ar.",
+                "type": "boolean"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "header": {
+    "schema_name": "player_identity",
+    "schema_version": "1.0.0",
+    "match_id": "exemplo-0001",
+    "video": {"video_id": "exemplo-0001-cam1", "sha256": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef", "fps": 25.0, "width": 1920, "height": 1080, "frame_count": 142500, "duration_s": 5700.0},
+    "producer": {"module": "identity", "module_version": "0.0.0", "config_sha256": "fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210", "created_at": "2026-10-05T00:00:00Z"},
+    "inputs": [{"schema_name": "tracks", "sha256": "ffeeddccbbaa99887766554433221100ffeeddccbbaa99887766554433221100"}]
+  },
+  "query": {"jersey_number": 10, "team_name": "Exemplo FC", "team_side": "home"},
+  "team_assignment": {
+    "method": "kmeans_torso_color",
+    "clusters": [
+      {"team_label": "team_a", "color_rgb": [200, 30, 30]},
+      {"team_label": "team_b", "color_rgb": [240, 240, 240]}
+    ],
+    "assignments": [
+      {"tracklet_id": 3, "team_label": "team_a", "confidence": 0.93},
+      {"tracklet_id": 12, "team_label": "team_a", "confidence": 0.9}
+    ]
+  },
+  "jersey_observations": [
+    {"tracklet_id": 3, "votes": [{"number": 10, "count": 6, "mean_confidence": 0.81}, {"number": 16, "count": 1, "mean_confidence": 0.42}], "frames_read": 7, "frames_attempted": 40},
+    {"tracklet_id": 12, "votes": [], "frames_read": 0, "frames_attempted": 12}
+  ],
+  "candidates": [
+    {"rank": 1, "tracklet_ids": [3, 12], "score": 0.86, "evidence_frames": [1200, 1350], "reason": "numero 10 lido em 6 de 7 leituras no tracklet 3; tracklet 12 reconectado"}
+  ],
+  "selection": {"status": "pending_confirmation", "tracklet_ids": [3, 12], "team_label": "team_a", "method": "tracklet_vote", "confirmed_by": null, "confirmed_at": null}
+}

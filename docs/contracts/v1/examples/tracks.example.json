@@ -1,0 +1,23 @@
+{
+  "header": {
+    "schema_name": "tracks",
+    "schema_version": "1.0.0",
+    "match_id": "exemplo-0001",
+    "video": {"video_id": "exemplo-0001-cam1", "sha256": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef", "fps": 25.0, "width": 1920, "height": 1080, "frame_count": 142500, "duration_s": 5700.0},
+    "producer": {"module": "tracking", "module_version": "0.0.0", "config_sha256": "fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210", "created_at": "2026-10-05T00:00:00Z"},
+    "inputs": [{"schema_name": "detections", "sha256": "00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff"}]
+  },
+  "tracker": {"name": "bytetrack", "version": "exemplo", "params": {}},
+  "tracklets": [
+    {"tracklet_id": 3, "global_id": 7, "class": "player", "start_frame": 1200, "end_frame": 1201, "observations": [
+      {"frame_index": 1200, "bbox_xyxy": [940.0, 520.0, 980.0, 610.0], "confidence": 0.88, "interpolated": false},
+      {"frame_index": 1201, "bbox_xyxy": [942.0, 521.0, 982.0, 611.0], "confidence": 0.5, "interpolated": true}
+    ]},
+    {"tracklet_id": 12, "global_id": 7, "class": "player", "start_frame": 1350, "end_frame": 1350, "observations": [
+      {"frame_index": 1350, "bbox_xyxy": [1010.0, 500.0, 1050.0, 590.0], "confidence": 0.83, "interpolated": false}
+    ]}
+  ],
+  "links": [
+    {"from_tracklet_id": 3, "to_tracklet_id": 12, "score": 0.74, "method": "spatiotemporal"}
+  ]
+}

@@ -1,0 +1,16 @@
+# Dados (vídeos, frames, artefatos, GT) nunca entram no git — LGPD/direitos
+data/
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+
+# Local
+.claude/
+.env

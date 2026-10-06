@@ -1,0 +1,17 @@
+{
+  "header": {
+    "schema_name": "events",
+    "schema_version": "1.0.0",
+    "match_id": "exemplo-0001",
+    "video": {"video_id": "exemplo-0001-cam1", "sha256": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef", "fps": 25.0, "width": 1920, "height": 1080, "frame_count": 142500, "duration_s": 5700.0},
+    "producer": {"module": "events", "module_version": "0.0.0", "config_sha256": "fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210", "created_at": "2026-10-05T00:00:00Z"},
+    "inputs": [{"schema_name": "field_positions", "sha256": "00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff"}]
+  },
+  "rules": {"ruleset_version": "0.1.0", "params": {"possession_radius_m": 1.5}},
+  "events": [
+    {"event_id": "E0001", "type": "pass", "frame_start": 1210, "frame_end": 1240, "t_start_s": 48.4, "t_end_s": 49.6,
+     "actor_entity_id": "g7", "receiver_entity_id": "g9", "involves_target": true, "outcome": "success",
+     "start_m": {"x_m": 52.3, "y_m": 30.1}, "end_m": {"x_m": 64.0, "y_m": 22.5},
+     "confidence": 0.7, "method": "rule", "method_detail": "pass_v0: posse de g7 seguida de posse de g9, mesmo time"}
+  ]
+}

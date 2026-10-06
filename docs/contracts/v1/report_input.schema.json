@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bmscouting.invalid/contracts/v1/report_input.schema.json",
+  "title": "report_input v1",
+  "description": "Entrada única e completa do LLM de relatório. O LLM só pode afirmar o que está em facts e deve citar fact_id; qualquer número no texto que não exista em facts é reprovado (métrica REP-1).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["header", "language", "audience", "player", "match", "facts", "highlights", "limitations", "generation_constraints"],
+  "properties": {
+    "header": {
+      "allOf": [
+        {"$ref": "common.schema.json#/$defs/header"},
+        {"properties": {"schema_name": {"const": "report_input"}}}
+      ]
+    },
+    "language": {"enum": ["pt-BR", "en", "es"]},
+    "audience": {"enum": ["scout", "coach", "player", "agent"]},
+    "player": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["jersey_number", "team_name", "display_name"],
+      "properties": {
+        "jersey_number": {"type": "integer", "minimum": 0, "maximum": 99},
+        "team_name": {"type": "string", "minLength": 1},
+        "display_name": {
+          "description": "Dado pessoal opcional (LGPD): só preencher com base legal registrada.",
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "match": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["competition", "date", "opponent"],
+      "properties": {
+        "competition": {"type": ["string", "null"]},
+        "date": {"type": ["string", "null"]},
+        "opponent": {"type": ["string", "null"]}
+      }
+    },
+    "facts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["fact_id", "metric", "value", "unit", "reliability", "statement_hint"],
+        "properties": {
+          "fact_id": {"type": "string", "pattern": "^F[0-9]{3,}$"},
+          "metric": {"type": "string", "minLength": 1},
+          "value": {"type": ["number", "string", "null"]},
+          "unit": {"type": "string"},
+          "reliability": {"$ref": "common.schema.json#/$defs/reliability"},
+          "statement_hint": {"type": "string"}
+        }
+      }
+    },
+    "highlights": {
+      "description": "Lances para recorte de clipe, ligados a eventos e fatos.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["event_id", "type", "t_start_s", "t_end_s", "fact_ids"],
+        "properties": {
+          "event_id": {"type": "string", "pattern": "^E[0-9]{4,}$"},
+          "type": {"type": "string", "minLength": 1},
+          "t_start_s": {"$ref": "common.schema.json#/$defs/timestamp_s"},
+          "t_end_s": {"$ref": "common.schema.json#/$defs/timestamp_s"},
+          "fact_ids": {"type": "array", "items": {"type": "string", "pattern": "^F[0-9]{3,}$"}}
+        }
+      }
+    },
+    "limitations": {
+      "description": "Limitações que o relatório DEVE declarar (cobertura, confiabilidade baixa etc.).",
+      "type": "array",
+      "items": {"type": "string", "minLength": 1}
+    },
+    "generation_constraints": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["only_listed_facts", "cite_fact_ids", "max_words"],
+      "properties": {
+        "only_listed_facts": {"const": true},
+        "cite_fact_ids": {"const": true},
+        "max_words": {"type": "integer", "minimum": 50, "maximum": 3000}
+      }
+    }
+  }
+}

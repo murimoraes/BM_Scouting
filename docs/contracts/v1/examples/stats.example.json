@@ -1,0 +1,18 @@
+{
+  "header": {
+    "schema_name": "stats",
+    "schema_version": "1.0.0",
+    "match_id": "exemplo-0001",
+    "video": {"video_id": "exemplo-0001-cam1", "sha256": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef", "fps": 25.0, "width": 1920, "height": 1080, "frame_count": 142500, "duration_s": 5700.0},
+    "producer": {"module": "stats", "module_version": "0.0.0", "config_sha256": "fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210", "created_at": "2026-10-05T00:00:00Z"},
+    "inputs": [{"schema_name": "field_positions", "sha256": "00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff"}, {"schema_name": "events", "sha256": "ffeeddccbbaa99887766554433221100ffeeddccbbaa99887766554433221100"}]
+  },
+  "target": {"entity_id": "g7", "jersey_number": 10, "team_label": "team_a"},
+  "coverage": {"match_duration_s": 5700.0, "observed_s": 4300.0, "tracked_fraction": 0.75, "valid_homography_fraction": 0.9},
+  "metrics": {
+    "distance_m": {"value": 9800.0, "unit": "m", "reliability": "medium", "n_samples": 107500, "basis": "soma de deslocamentos apos suavizacao"},
+    "passes_completed": {"value": 31, "unit": "count", "reliability": "low", "n_samples": 31, "basis": "events: type=pass, outcome=success"},
+    "sprints": {"value": null, "unit": "count", "reliability": "unavailable", "n_samples": 0, "basis": "nao calculado nesta versao"}
+  },
+  "heatmap": {"grid_nx": 3, "grid_ny": 2, "normalization": "time_fraction", "values": [[0.1, 0.2, 0.1], [0.2, 0.3, 0.1]]}
+}

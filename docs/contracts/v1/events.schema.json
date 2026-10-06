@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bmscouting.invalid/contracts/v1/events.schema.json",
+  "title": "events v1",
+  "description": "Saída do módulo events: eventos de jogo derivados por regras geométricas versionadas (Onda 3) ou, no futuro, por modelo. Consumido por stats e report.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["header", "rules", "events"],
+  "properties": {
+    "header": {
+      "allOf": [
+        {"$ref": "common.schema.json#/$defs/header"},
+        {"properties": {"schema_name": {"const": "events"}}}
+      ]
+    },
+    "rules": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ruleset_version", "params"],
+      "properties": {
+        "ruleset_version": {"$ref": "common.schema.json#/$defs/semver"},
+        "params": {"type": "object"}
+      }
+    },
+    "events": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/event"}
+    }
+  },
+  "$defs": {
+    "event": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event_id", "type", "frame_start", "frame_end", "t_start_s", "t_end_s",
+        "actor_entity_id", "receiver_entity_id", "involves_target", "outcome",
+        "start_m", "end_m", "confidence", "method", "method_detail"
+      ],
+      "properties": {
+        "event_id": {"type": "string", "pattern": "^E[0-9]{4,}$"},
+        "type": {"enum": ["possession", "pass", "shot", "tackle", "interception", "ball_recovery", "other"]},
+        "frame_start": {"$ref": "common.schema.json#/$defs/frame_index"},
+        "frame_end": {"$ref": "common.schema.json#/$defs/frame_index"},
+        "t_start_s": {"$ref": "common.schema.json#/$defs/timestamp_s"},
+        "t_end_s": {"$ref": "common.schema.json#/$defs/timestamp_s"},
+        "actor_entity_id": {"type": ["string", "null"]},
+        "receiver_entity_id": {"type": ["string", "null"]},
+        "involves_target": {"type": "boolean"},
+        "outcome": {"enum": ["success", "failure", "unknown"]},
+        "start_m": {
+          "oneOf": [{"$ref": "common.schema.json#/$defs/point_m"}, {"type": "null"}]
+        },
+        "end_m": {
+          "oneOf": [{"$ref": "common.schema.json#/$defs/point_m"}, {"type": "null"}]
+        },
+        "confidence": {"$ref": "common.schema.json#/$defs/confidence"},
+        "method": {"enum": ["rule", "model", "human"]},
+        "method_detail": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

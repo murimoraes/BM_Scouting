@@ -1,0 +1,19 @@
+{
+  "header": {
+    "schema_name": "detections",
+    "schema_version": "1.0.0",
+    "match_id": "exemplo-0001",
+    "video": {"video_id": "exemplo-0001-cam1", "sha256": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef", "fps": 25.0, "width": 1920, "height": 1080, "frame_count": 142500, "duration_s": 5700.0},
+    "producer": {"module": "detection", "module_version": "0.0.0", "config_sha256": "fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210", "created_at": "2026-10-05T00:00:00Z"},
+    "inputs": []
+  },
+  "detector": {"model_name": "exemplo-detector", "weights_sha256": "00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff", "confidence_threshold": 0.3, "classes": ["player", "goalkeeper", "referee"]},
+  "sampling": {"frame_stride": 1, "frame_start": 1200, "frame_end": 1201},
+  "frames": [
+    {"frame_index": 1200, "timestamp_s": 48.0, "detections": [
+      {"class": "player", "bbox_xyxy": [940.0, 520.0, 980.0, 610.0], "confidence": 0.88},
+      {"class": "referee", "bbox_xyxy": [1300.0, 480.0, 1335.0, 565.0], "confidence": 0.71}
+    ]},
+    {"frame_index": 1201, "timestamp_s": 48.04, "detections": []}
+  ]
+}
